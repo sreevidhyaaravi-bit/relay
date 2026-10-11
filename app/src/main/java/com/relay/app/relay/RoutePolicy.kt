@@ -42,7 +42,7 @@ data class RouteInput(
 )
 
 /**
- * Documented route selection policy (see docs/ARCHITECTURE.md section 5):
+ * Route selection policy:
  *
  * 1. Direct links to the intended recipient come first. With several transports to the same
  *    peer, the one that last succeeded wins (avoids flip-flopping), then the preferred order

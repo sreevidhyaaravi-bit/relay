@@ -18,7 +18,7 @@ if (-not $adb) {
     $adb = $candidates | Where-Object { Test-Path $_ } | Select-Object -First 1
 }
 if (-not $adb) {
-    Write-Host "adb not found. Install Android Platform-Tools (see HANDOVER.md, step 2) or Android Studio." -ForegroundColor Red
+    Write-Host "adb not found. Install Android SDK Platform-Tools (developer.android.com/tools/releases/platform-tools) or Android Studio." -ForegroundColor Red
     exit 1
 }
 if (-not (Test-Path $Apk)) {

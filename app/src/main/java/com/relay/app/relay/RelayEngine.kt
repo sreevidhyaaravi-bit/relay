@@ -36,7 +36,6 @@ import java.util.UUID
 /**
  * The single source of truth for message state transitions. Used by the real app (with
  * RoomRelayStore) and by the Relay Lab simulator (with InMemoryRelayStore).
- * See docs/ARCHITECTURE.md section 4 for the full state machine.
  *
  * Every read-modify-write happens inside [RelayStore.transaction] so concurrent events
  * (an ACK on one link, a receipt on another) cannot overwrite each other.

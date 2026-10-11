@@ -48,8 +48,8 @@ import kotlinx.coroutines.withTimeout
 import java.util.concurrent.ConcurrentHashMap
 
 /**
- * Optional Firebase relay (Anonymous Auth + Cloud Firestore). See docs/FIREBASE_SETUP.md and
- * firestore.rules.
+ * Optional Firebase relay (Anonymous Auth + Cloud Firestore). See firestore.rules
+ *  for the security rules.
  *
  * Inactive, and reported as "Internet relay not configured", when app/google-services.json was
  * not present at build time or FirebaseApp failed to initialise. Firebase classes are only
@@ -242,7 +242,7 @@ class InternetRelayTransport(
         } catch (e: DeviceIdTakenException) {
             registered = false
             setStatus(TransportState.FAILED, "This device id is registered by another install", e.message)
-            true // retrying cannot fix this; see FIREBASE_SETUP.md troubleshooting
+            true // retrying cannot fix this: delete the old devices/ entry in the Firestore console
         } catch (e: TimeoutCancellationException) {
             registered = false
             setStatus(TransportState.FAILED, "Internet relay did not respond", "timed out")
@@ -252,7 +252,7 @@ class InternetRelayTransport(
         } catch (e: FirebaseFirestoreException) {
             registered = false
             val hint = if (e.code == FirebaseFirestoreException.Code.PERMISSION_DENIED) {
-                "Firestore rules rejected the request; apply firestore.rules (see docs/FIREBASE_SETUP.md)"
+                "Firestore rules rejected the request; publish firestore.rules in the Firebase console"
             } else {
                 e.code.name
             }

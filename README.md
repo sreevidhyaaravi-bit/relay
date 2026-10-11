@@ -6,14 +6,10 @@ Relay is an emergency communication system designed to help people send SOS mess
 really works at each hop (Bluetooth Classic, Wi-Fi Direct, local Wi-Fi, or an optional Firebase
 internet relay) and keeps them safely queued when no route exists.
 
-> **Status:** compiles, debug APK built, 146 automated tests passing.
-> **Not yet tested on physical phones.** See [docs/STATUS.md](docs/STATUS.md).
+## Install
 
-## Get started
-
-* **Install and demo:** [HANDOVER.md](HANDOVER.md) (Windows-first; no tools needed for a plain install).
-* **Test on real phones:** [docs/PHYSICAL_TESTS.md](docs/PHYSICAL_TESTS.md).
-* **Demo script:** [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+Download `RELAY-debug.apk` from the [Releases](https://github.com/sreevidhyaaravi-bit/relay/releases)
+page onto an Android 8.0+ phone, open it and tap **Install**. No internet is needed to use it.
 
 ## What it does
 
@@ -81,25 +77,11 @@ app/src/main/java/com/relay/app/
   sim/                 Relay Lab simulator
   ui/                  theme, shared components, formatters, navigation, screens/
 app/src/test/          146 unit / Robolectric tests (+1 opt-in real-Firebase test)
-docs/                  architecture, status, tests, demo, troubleshooting, Firebase
 firestore.rules        security rules for the optional internet relay
 scripts/               install helpers for Windows and macOS
 ```
 
-## Documentation
-
-| Doc | Contents |
-|---|---|
-| [HANDOVER.md](HANDOVER.md) | Install, USB debugging, adb, rebuild on Windows, demo-day checklist |
-| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Protocol, state machine, routing policy, data model |
-| [docs/STATUS.md](docs/STATUS.md) | What works, what is unverified, test results, next steps |
-| [docs/PHYSICAL_TESTS.md](docs/PHYSICAL_TESTS.md) | Tests A to F with result tables |
-| [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md) | 6-minute hackathon demo |
-| [docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md) | Permissions, Bluetooth / Wi-Fi Direct / LAN issues, battery limits, build errors, security notes |
-| [docs/FIREBASE_SETUP.md](docs/FIREBASE_SETUP.md) | Optional internet relay setup |
-
 ## Limitations
 
 No end-to-end encryption; delivery receipts are not signed; background operation is limited by
-Android battery rules; RELAY does not contact emergency services. Details in
-[docs/TROUBLESHOOTING.md](docs/TROUBLESHOOTING.md#security-properties-and-limitations-hackathon-mvp).
+Android battery rules; RELAY does not contact emergency services.
