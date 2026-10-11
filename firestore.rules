@@ -1,0 +1,77 @@
+rules_version = '2';
+
+// RELAY internet relay security rules.
+// Paste these into Firebase console > Firestore Database > Rules, then click Publish.
+// Every request must come from a signed-in (anonymous) Firebase user. Nothing is public.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function validDeviceId(id) {
+      return id is string && id.matches('^[A-Za-z0-9._:-]{1,64}$');
+    }
+
+    // devices/{deviceId}: maps a RELAY device id to the Firebase user that owns it.
+    // The first install to register an id owns it; nobody else can take it over.
+    match /devices/{deviceId} {
+      allow read: if signedIn();
+      allow create: if signedIn()
+        && validDeviceId(deviceId)
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.deviceId == deviceId
+        && request.resource.data.keys().hasOnly(['uid', 'deviceId', 'displayName', 'updatedAt']);
+      allow update: if signedIn()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.deviceId == resource.data.deviceId
+        && request.resource.data.keys().hasOnly(['uid', 'deviceId', 'displayName', 'updatedAt']);
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // messages/{messageId}: one document per message id (idempotent uploads).
+    // Only the uploader and the intended recipient can read it.
+    match /messages/{messageId} {
+      // A get of a document that does not exist yet is allowed so the uploader can check
+      // "already uploaded?" inside a transaction.
+      allow get: if signedIn() && (
+        resource == null
+        || resource.data.uploaderUid == request.auth.uid
+        || resource.data.recipientUid == request.auth.uid);
+
+      allow list: if signedIn() && (
+        resource.data.uploaderUid == request.auth.uid
+        || resource.data.recipientUid == request.auth.uid);
+
+      allow create: if signedIn()
+        && request.resource.data.uploaderUid == request.auth.uid
+        && request.resource.data.id == messageId
+        && validDeviceId(request.resource.data.senderId)
+        && validDeviceId(request.resource.data.recipientId)
+        && request.resource.data.body is string
+        && request.resource.data.body.size() > 0
+        && request.resource.data.body.size() <= 2000
+        && request.resource.data.createdAtUtc is int
+        && request.resource.data.expiresAtUtc is int
+        && request.resource.data.expiresAtUtc > request.resource.data.createdAtUtc
+        && request.resource.data.deliveredAtUtc == null
+        && request.resource.data.recipientUid is string
+        && exists(/databases/$(database)/documents/devices/$(request.resource.data.recipientId))
+        && get(/databases/$(database)/documents/devices/$(request.resource.data.recipientId)).data.uid
+             == request.resource.data.recipientUid;
+
+      // Only the recipient may update, and only the delivery fields (after storing locally).
+      allow update: if signedIn()
+        && resource.data.recipientUid == request.auth.uid
+        && request.resource.data.diff(resource.data).affectedKeys()
+             .hasOnly(['deliveredAtUtc', 'deliveredByDeviceId', 'deliveredByName', 'rejectedReason']);
+
+      // The uploader may withdraw a message that has not been delivered yet.
+      allow delete: if signedIn()
+        && resource.data.uploaderUid == request.auth.uid
+        && resource.data.deliveredAtUtc == null;
+    }
+  }
+}
