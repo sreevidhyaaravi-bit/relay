@@ -236,7 +236,6 @@ fun SettingsScreen(nav: RelayNavigator) {
                     "Turn mobile data off and disconnect from internet Wi-Fi on both phones.",
                     "First time: Phone B taps Nearby devices > Let others find this phone. Phone A: Search for nearby phones > Connect. Afterwards they reconnect by themselves.",
                     "Phone A: New message to Phone B, send. Phone B: check the Inbox.",
-                    "Full steps: docs/PHYSICAL_TESTS.md in the project.",
                 ).forEachIndexed { i, step -> Text("${i + 1}. $step", style = MaterialTheme.typography.bodySmall) }
             }
 
