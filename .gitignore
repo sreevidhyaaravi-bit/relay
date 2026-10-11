@@ -1,0 +1,15 @@
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/app/build/
+/captures
+.externalNativeBuild
+.cxx
+# Firebase config is project-specific; each team adds their own (see docs/FIREBASE_SETUP.md).
+app/google-services.json
+
+# Built APKs are shared in the handover zip, not committed.
+*.apk
